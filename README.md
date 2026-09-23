@@ -88,7 +88,7 @@ Distributed under the MIT License. See LICENSE for more information.
 
 > **Real-Time On-Device Driver Monitoring & Predictive Safety Analytics Platform.**
 
-**KIM App (Driver Safety AI)** is an advanced cross-platform Flutter application designed to enhance road safety through on-device computer vision and predictive driver analytics. By running real-time facial landmark analysis via Google ML Kit, the app continuously evaluates driver fatigue markers—including Eye Aspect Ratio (EAR) for micro-sleeps, mouth metrics for yawning, and head pose orientation for distraction—delivering sub-second audio-visual alerts without relying on internet connectivity or cloud processing.
+**App (Driver Safety AI)** is an advanced cross-platform Flutter application designed to enhance road safety through on-device computer vision and predictive driver analytics. By running real-time facial landmark analysis via Google ML Kit, the app continuously evaluates driver fatigue markers—including Eye Aspect Ratio (EAR) for micro-sleeps, mouth metrics for yawning, and head pose orientation for distraction—delivering sub-second audio-visual alerts without relying on internet connectivity or cloud processing.
 
 ---
 
