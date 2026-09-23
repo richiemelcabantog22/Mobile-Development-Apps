@@ -83,138 +83,144 @@ Distributed under the MIT License. See LICENSE for more information.
 ---
 ---
 
-Driver Safety AI (KIM App)
 
-Real-Time On-Device Driver Monitoring & Safety Analytics Platform.
+# Driver Safety AI
 
-Driver Safety AI is an advanced Flutter-based cross-platform mobile application engineered to enhance road safety through real-time driver monitoring, computer vision, and predictive safety analytics. Utilizing on-device Machine Learning via Google ML Kit, the app monitors driver facial metrics in real time to detect signs of fatigue, drowsiness (via Eye Aspect Ratio), yawning, and distraction—triggering instant audio-visual alerts and logging safety events without requiring cloud dependence.
+> **Real-Time On-Device Driver Monitoring & Predictive Safety Analytics Platform.**
 
-🌟 Key Features
+**KIM App (Driver Safety AI)** is an advanced cross-platform Flutter application designed to enhance road safety through on-device computer vision and predictive driver analytics. By running real-time facial landmark analysis via Google ML Kit, the app continuously evaluates driver fatigue markers—including Eye Aspect Ratio (EAR) for micro-sleeps, mouth metrics for yawning, and head pose orientation for distraction—delivering sub-second audio-visual alerts without relying on internet connectivity or cloud processing.
 
-👁️ On-Device Computer Vision Pipeline: High-frequency facial landmark analysis tracking Eye Aspect Ratio (EAR) for micro-sleeps, mouth open ratios for yawning, and head pose/orientation angles for distraction.
+---
 
-🚨 Real-Time Alert System: Low-latency audio and visual warnings managed by safety_monitor.dart and integrated haptic feedback when risk thresholds are breached.
+## 🌟 Key Features
 
-⏱️ Pre-Drive Wake-Up & Reaction Tests: Integrated pre-drive assessment routines and reaction time challenges to gauge driver alertness before starting a session.
+* 👁️ **On-Device Computer Vision Pipeline:** Fast, edge-based facial landmark processing tracking Eye Aspect Ratio (EAR), mouth-opening ratio, and 3D head posture angles (yaw, pitch, roll).
+* 🚨 **Low-Latency Alert System:** Instant warning triggers powered by `safety_monitor.dart` utilizing dynamic haptics, color-shifting visual overlays, and text-to-speech Cues.
+* ⚡ **Pre-Drive Wake-Up Routine:** Integrated driver readiness challenges and reaction speed tests to measure alertness before starting a route.
+* 📊 **Trip Diagnostics & Historical Analytics:** Logged fatigue events, distraction frequency breakdown, and safety scoring per driving session.
+* 📶 **Offline-First Architecture:** Local NoSQL storage using Hive ensures non-stop recording and analysis in remote or poor-connectivity areas.
+* 🌙 **Night-Optimized UI (Cyberpunk Dark Theme):** High-contrast, low-glare neon interface designed for minimal driver eye fatigue during night trips.
 
-📊 Trip Diagnostics & Session History: Comprehensive session summaries, historical logging of fatigue/distraction events, and driving stability trends.
+---
 
-📶 Offline-First Architecture: Local storage powered by Hive ensures full functionality in dead zones and remote locations.
+## 🛠️ Architecture & Tech Stack
 
-🎨 Cyberpunk / Dark Neon UI: Dark-mode optimized interface designed specifically for night driving to reduce driver glare and distraction.
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | [Flutter](https://flutter.dev/) (Dart `>=3.0.0`) |
+| **Computer Vision / ML** | [Google ML Kit Face Detection](https://pub.dev/packages/google_mlkit_face_detection) |
+| **Camera Hardware Interface** | `camera` Flutter Plugin (Live Image Streams) |
+| **Local Storage** | [Hive NoSQL](https://pub.dev/packages/hive) |
+| **Audio & Speech** | `flutter_tts` & `audioplayers` |
+| **State Management** | Provider / Riverpod |
 
-🛠️ Architecture & Tech Stack
+---
 
-Framework: Flutter (Dart)
+## ⚙️ ML Detection Pipeline
 
-Computer Vision & ML: Google ML Kit Face Detection
+```text
+[ Front Camera Stream ] 
+          │
+          ▼
+ [ Camera Stream Handler ] ──► Frame Conversion (YUV420 / NV21 to InputImage)
+          │
+          ▼
+ [ ML Kit Face Detector ]
+          │
+          ├──► Landmark Matrix (EAR Math)  ──► Micro-sleep / Drowsiness Detection
+          ├──► Mouth Aspect Ratio          ──► Yawn Frequency Tracking
+          └──► Head Rotation Angles        ──► Driver Distraction Alerts
+          │
+          ▼
+ [ Safety Monitor Service ] ──► Trigger Audio / Speech / Haptic Alarms
+          │
+          ▼
+ [ Local Hive Database ]   ──► Store Event Log & Generate Session Summary
+```
 
-Camera Stream Handler: camera plugin with live image stream processing
+---
 
-Local Data Persistence: Hive NoSQL for fast event and session logging
+## 📱 Codebase Structure (`KIM app / CODES dart`)
 
-Audio & Speech: flutter_tts & audioplayers for voice prompts and alert cues
+The codebase follows a modular architecture aligned with your `lib/` folder:
 
-State Management: Provider / Riverpod
-
-⚙️ System Workflow
-
-[ Camera Stream ] 
-       │
-       ▼
-[ Image Stream Handler ] ──(Format Conversion)
-       │
-       ▼
-[ ML Kit Face Detector ]
-       │
-       ├──► Landmark Extract (EAR Calculation) ──► Drowsiness Detection
-       ├──► Mouth Landmark Ratio               ──► Yawn Detection
-       └──► Head Rotation Angles (Yaw/Pitch)    ──► Distraction Check
-       │
-       ▼
-[ Safety Monitor Service ] ──(Threshold Exceeded)──► [ Audio / TTS / Haptic Alert ]
-       │
-       ▼
-[ Hive Local DB Storage ] ──► [ Dashboard / Session Diagnostics ]
-
-
-🚀 Getting Started
-
-Prerequisites
-
-Flutter SDK (>= 3.0.0)
-
-Dart SDK
-
-Android Studio / Xcode
-
-Physical mobile device (Android/iOS) with front-facing camera support
-
-Note: Real-time ML Kit camera streams require physical mobile hardware and cannot be properly evaluated on desktop emulators.
-
-Installation & Setup
-
-Clone the repository:
-
-git clone https://github.com/your-username/driver-safety-ai.git
-cd driver-safety-ai
-
-
-Install dependencies:
-
-flutter pub get
-
-
-Generate Hive Adapters:
-
-flutter pub run build_runner build --delete-conflicting-outputs
-
-
-Configure Device Permissions:
-
-Android (android/app/src/main/AndroidManifest.xml):
-
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.VIBRATE" />
-
-
-iOS (ios/Runner/Info.plist):
-
-<key>NSCameraUsageDescription</key>
-<string>Camera access is required for real-time driver fatigue and drowsiness monitoring.</string>
-
-
-Run on a physical device:
-
-flutter run
-
-
-📱 Project Directory Structure
-
+```text
 lib/
-├── main.dart             # Application entry point & service initialization
-├── ai/                   # ML Kit detection engine & face mesh handlers
-├── core/                 # App constants, theme configuration, audio/haptic triggers
-├── database/             # Hive box setup & local database access objects
-├── models/               # Event logs, user preferences, and session models
-├── screens/              # Dashboard, live monitoring overlay, history, diagnostics
-├── services/             # Safety monitor service, camera stream handler, TTS
-├── utils/                # Mathematical helpers (EAR, mouth ratio, angle math)
-└── widgets/              # Neon panel containers, status gauges, alert dialogs
+├── main.dart             # Application startup, Hive initialization, & routes
+├── ai/                   # ML Kit detection engine, face mesh, & mathematical models
+├── core/                 # App constants, dark neon theme, & global controllers
+├── database/             # Hive boxes, local storage models, & DB helper classes
+├── models/               # Event logs, user settings, & trip diagnostic data models
+├── screens/              # Live camera overlay, dashboard, history, & diagnostic views
+├── services/             # safety_monitor.dart, camera stream handler, & TTS service
+├── utils/                # EAR calculations, angle calculations, & image format converters
+└── widgets/              # Neon status gauges, custom gauges, & alert dialogs
+```
 
+---
 
-🤝 Contributing
+## 🚀 Getting Started
 
-Fork the Repository
+### Prerequisites
 
-Create a Feature Branch (git checkout -b feature/NewMetric)
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (`>= 3.0.0`)
+* [Dart SDK](https://dart.dev/get-dart)
+* Android Studio or Xcode
+* Physical Android or iOS device with a front-facing camera
 
-Commit your Changes (git commit -m 'Add new distraction metric')
+> ⚠️ **Hardware Requirement:** Live camera feeds and real-time ML Kit processing require physical device hardware and cannot be fully tested on desktop emulators.
 
-Push to the Branch (git push origin feature/NewMetric)
+---
 
-Open a Pull Request
+### Installation Setup
 
-📜 License
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/kim-driver-safety-ai.git
+   cd kim-driver-safety-ai
+   ```
 
-Distributed under the MIT License. See LICENSE for details.
+2. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Generate Hive Database Adapters:**
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+4. **Configure Hardware Permissions:**
+
+   * **Android** (`android/app/src/main/AndroidManifest.xml`):
+     ```xml
+     <uses-permission android:name="android.permission.CAMERA" />
+     <uses-permission android:name="android.permission.VIBRATE" />
+     ```
+
+   * **iOS** (`ios/Runner/Info.plist`):
+     ```xml
+     <key>NSCameraUsageDescription</key>
+     <string>Camera access is required for real-time driver drowsiness and fatigue monitoring.</string>
+     ```
+
+5. **Run the Application:**
+   ```bash
+   flutter run
+   ```
+
+---
+
+## 🤝 Contributing
+
+1. Fork the Repository
+2. Create your Feature Branch (`git checkout -b feature/NewSafetyMetric`)
+3. Commit your changes (`git commit -m 'Add new fatigue detection metric'`)
+4. Push to the Branch (`git push origin feature/NewSafetyMetric`)
+5. Open a Pull Request
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for details.
